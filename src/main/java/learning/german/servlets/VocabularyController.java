@@ -12,6 +12,7 @@ import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
 public class VocabularyController {
@@ -39,7 +40,7 @@ public class VocabularyController {
     }
 
     @PostMapping("/translate")
-    public String translate(@RequestBody String word, Model model) {
+    public String translate(@RequestParam String word, Model model) {
         String translation = addWordService.translate(word);
         logger.info("Map  " + addWordService.russianGermanVocabulary);
         logger.info("" + addWordService.germanRussianVocabulary);
