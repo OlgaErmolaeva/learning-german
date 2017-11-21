@@ -6,6 +6,7 @@
 <h1>New word is successfully added</h1>
 <h1>New word is ${germanWord}</h1>
 <h1>New word is ${translation}</h1>
+<h1>New word is ${synonym}</h1>
 </form>
 </body>
 </html>

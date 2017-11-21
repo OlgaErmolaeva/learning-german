@@ -1,6 +1,5 @@
 package learning.german.servlets;
 
-
 import learning.german.model.WordCard;
 import learning.german.services.AddWordService;
 import org.slf4j.Logger;
@@ -9,10 +8,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
+
+import org.hibernate.validator.*;
+
+import javax.validation.Valid;
+import java.util.Map;
 
 @Controller
 public class VocabularyController {
@@ -23,15 +28,21 @@ public class VocabularyController {
     Logger logger = LoggerFactory.getLogger(VocabularyController.class);
 
     @PostMapping("/addWord")
-    public String addWord(WordCard wordCard, Model model) {
-        addWordService.addToVocabulary(wordCard);
+    public String addWord(@Valid WordCard wordCard, Model model, BindingResult bindingResult) {
+        logger.error("BINDING RESULT  "+ bindingResult);
+        if (bindingResult.hasErrors()) {
 
-        model.addAttribute("germanWord", wordCard.germanWord);
-        model.addAttribute("translation", wordCard.translation);
+            model.addAttribute("error", "Fields word and translation couldn't be null");
+            return "wordCard";
+        } else {
+            addWordService.addToVocabulary(wordCard);
+            model.addAttribute("germanWord", wordCard.germanWord);
+            model.addAttribute("translation", wordCard.translation);
+            model.addAttribute("synonym", wordCard.synonym);
+            logger.info("new WORD added  " + wordCard.germanWord + " " + wordCard.translation + "  " + wordCard.synonym);
 
-        logger.info("new WORD added  " + wordCard.germanWord + " " + wordCard.translation);
-
-        return "addedSuccessfully";
+            return "addedSuccessfully";
+        }
     }
 
     @GetMapping("/translate")
@@ -40,16 +51,36 @@ public class VocabularyController {
     }
 
     @PostMapping("/translate")
-    public String translate(@RequestParam String word, Model model) {
-        String translation = addWordService.translate(word);
+    public String translate(@RequestParam Map<String, String> word, Model model) {
+        String translation = addWordService.translate(word.get("word"));
         logger.info("Map  " + addWordService.russianGermanVocabulary);
         logger.info("" + addWordService.germanRussianVocabulary);
         model.addAttribute("word", word);
         model.addAttribute("translation", translation);
+        model.addAttribute("synonym", translation);
 
         logger.info("WORD tranlated  " + word + " " + translation);
 
         return "translated";
+    }
+
+    @PostMapping("/translate/more")
+    public String translateMore(@RequestBody Map<String, String> body, Model model) {
+        String translation = addWordService.translate(body.get("word"));
+        String translation1 = addWordService.translate(body.get("word1"));
+        String translation2 = addWordService.translate(body.get("word2"));
+        logger.info("Map  " + addWordService.russianGermanVocabulary);
+        logger.info("" + addWordService.germanRussianVocabulary);
+        model.addAttribute("word", body.get("word"));
+        model.addAttribute("word1", body.get("word1"));
+        model.addAttribute("word2", body.get("word2"));
+        model.addAttribute("translation", translation);
+        model.addAttribute("translation1", translation1);
+        model.addAttribute("translation2", translation2);
+
+        logger.info("WORD tranlated  " + body + " " + translation);
+
+        return "translatedMore";
     }
 
     @GetMapping("/showWordCard")
