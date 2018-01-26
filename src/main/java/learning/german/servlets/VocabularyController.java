@@ -9,10 +9,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 import org.hibernate.validator.*;
 
@@ -28,7 +25,7 @@ public class VocabularyController {
     Logger logger = LoggerFactory.getLogger(VocabularyController.class);
 
     @PostMapping("/addWord")
-    public String addWord(@Valid WordCard wordCard, Model model, BindingResult bindingResult) {
+    public String addWord(@ModelAttribute @Valid WordCard wordCard, BindingResult bindingResult, Model model) {
         logger.error("BINDING RESULT  "+ bindingResult);
         if (bindingResult.hasErrors()) {
 

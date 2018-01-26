@@ -1,13 +1,14 @@
 package learning.german.model;
 
 
+import org.hibernate.validator.constraints.NotEmpty;
 import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
 
 @Component
 public class WordCard {
-    @NonNull
+    @NotEmpty
     public String germanWord;
     @NonNull
     public String translation;
@@ -27,7 +28,7 @@ public class WordCard {
         return germanWord;
     }
 
-    public void setGermanWord(@NonNull String germanWord) {
+    public void setGermanWord(@NotEmpty String germanWord) {
         this.germanWord = germanWord;
     }
 
